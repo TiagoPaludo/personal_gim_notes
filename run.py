@@ -12,8 +12,15 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open("personal gim notes")
 
-user = SHEET.worksheet('user')
+def get_user_data():
+    """
+    get user data inseted by imput metod
+    """
+    print("Please enter detais required to create a new user. if You are user log in please")
+    print("insert data as in order example")
+    print("name,surname,age(00),gender(male,female),weight(in kg),height(in cm)\n")
 
-data = user.get_all_values()
+    data_str = input("enter your details here:")
+    print(f"the data provided is",{data_str})
 
-print(data)
+get_user_data()
