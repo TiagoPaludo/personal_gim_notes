@@ -18,7 +18,7 @@ def get_user_data():
     """
     print("Please enter detais required to create a new user. if You are user log in please")
     print("insert data as in order example")
-    print("name,surname,age(00),gender(male,female),weight(in kg),height(in cm)\n")
+    print("name, surname, age(00), gender(male,female), weight(in kg), height(in cm)\n")
 
     data_str = input("enter your details here:")
     
@@ -31,7 +31,7 @@ def validate_data(values):
     instructed to do.
     """
     try:
-        [int(value) for value in values]
+        [int(value) for value in values(2,4,5)]
         if len(values) != 6:
             raise ValueError(
                 f"Exactly 6 values required, you provided {len(values)}"
