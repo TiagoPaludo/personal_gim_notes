@@ -1,5 +1,6 @@
 import gspread
 from google.oauth2.service_account import Credentials
+import re
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -19,7 +20,7 @@ def get_user_data():
     while True:
         print("Please enter detais required to create a new user. if You are user log in please")
         print("insert data as in order example")
-        print("name, surname, age(00), gender(male,female), weight(in kg), height(in cm)\n")
+        print(" name:\n surname:\n age(00):\n gender(male,female):\n weight(in kg):\n height(in cm):\n e-mail:\n")
 
         data_str = input("enter your details here:")
         
@@ -32,21 +33,65 @@ def get_user_data():
 
     return user_data
 
+def validate_int(value):
+    try:
+        int(value)
+        return True
+    except ValueError:
+        return False
+
+def validate_float(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+
+def validate_email(value):
+    pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    return re.match(pattern, value) is not None
+
+def validate_str(value):
+    return isinstance(value,str) and len(value) > 0
+
 def validate_data(values):
     """
-Inside the try, verify the values int str or integers where it is
-instructed to do.
-"""
+    Verify the values for specified types at specified indices.
+    """
+
+    expected_types = ['str','str','int','str','float','int','email']
+
+    if len(values) != len(expected_types):
+        print(f"Exactly{len(expected_types)} values required, you provided {len(values)}\n")
+        return False
+
+    validators = {
+        'int': validate_int,
+        'float': validate_float,
+        'str': validate_str,
+        'email': validate_email,
+    }
+
     try:
-        [int(value) for value in values]
-        if len(values) != 6:
-            raise ValueError(
-                f"Exactly 6 values required, you provided {len(values)}"
-            )
+        for index, (value, expected_types) in enumerate(zip(values, expected_types)):
+            if not validators[expected_types](value):
+                raise ValueError(f"invalid {expected_types} value at index {index} : {value}")
     except ValueError as e:
-        print(f"Invalid data: {e}, please try again.\n")
+        print(f"invalid data: {e}, try again.\n")
         return False
 
     return True
 
+def update_user_worksheet(data):
+    """
+    Update sales worksheet, add new row with the list data provided
+    """
+    print("Updating user worksheet...\n")
+    user_worksheet = SHEET.worksheet("user")
+    user_worksheet.append_row(data)
+    print("User worksheet updated successfully.\n")
+
+
 data = get_user_data()
+user_data = [int(num) for num in data]
+update_user_worksheet(user_data)
