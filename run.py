@@ -15,17 +15,17 @@ SHEET = GSPREAD_CLIENT.open("personal gim notes")
 
 def get_user_data():
     """
-    get user data inseted by imput metod
+    Get user data inserted by input method
     """
     while True:
-        print("Please enter detais required to create a new user. if You are user log in please")
+        print("Please enter details required to create a new user. if You are user log in please")
         print("insert data as in order example")
-        print(" name:\n surname:\n age(00):\n gender(male,female):\n weight(in kg):\n height(in cm):\n e-mail:\n")
+        print("name:, surname:, age(00):, gender(male,female):, weight(in kg):, height(in cm):, e-mail:")
 
-        data_str = input("enter your details here:")
+        data_str = input("Enter your details here (comma-separated): ")
         
         user_data = data_str.split(",")
-        validate_data(user_data)
+        #validate_data(user_data)
 
         if validate_data(user_data):
             print("Data is valid!")
@@ -52,17 +52,17 @@ def validate_email(value):
     return re.match(pattern, value) is not None
 
 def validate_str(value):
-    return isinstance(value,str) and len(value) > 0
+    return isinstance(value, str) and len(value) > 0
 
 def validate_data(values):
     """
     Verify the values for specified types at specified indices.
     """
 
-    expected_types = ['str','str','int','str','float','int','email']
+    expected_types = ['str', 'str', 'int', 'str', 'float', 'int', 'email']
 
     if len(values) != len(expected_types):
-        print(f"Exactly{len(expected_types)} values required, you provided {len(values)}\n")
+        print(f"Exactly {len(expected_types)} values required, you provided {len(values)}\n")
         return False
 
     validators = {
@@ -74,8 +74,8 @@ def validate_data(values):
 
     try:
         for index, (value, expected_types) in enumerate(zip(values, expected_types)):
-            if not validators[expected_types](value):
-                raise ValueError(f"invalid {expected_types} value at index {index} : {value}")
+            if not validators[expected_types](value.strip()):
+                raise ValueError(f"invalid {expected_types} value at index {index}: {value}")
     except ValueError as e:
         print(f"invalid data: {e}, try again.\n")
         return False
@@ -84,7 +84,7 @@ def validate_data(values):
 
 def update_user_worksheet(data):
     """
-    Update sales worksheet, add new row with the list data provided
+    Update user worksheet, add new row with the list data provided
     """
     print("Updating user worksheet...\n")
     user_worksheet = SHEET.worksheet("user")
@@ -93,5 +93,4 @@ def update_user_worksheet(data):
 
 
 data = get_user_data()
-user_data = [int(num) for num in data]
-update_user_worksheet(user_data)
+update_user_worksheet(data)
