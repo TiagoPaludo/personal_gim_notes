@@ -20,7 +20,7 @@ def get_user_data():
     while True:
         print("Please enter details required to create a new user. if You are user log in please")
         print("insert data as in order example")
-        print("name:, surname:, age(00):, gender(male,female):, weight(in kg):, height(in cm):, e-mail:")
+        print(" name:\n surname:\n age(00):\n gender(male,female):\n weight(in kg):\n height(in cm):\n e-mail:\n")
 
         data_str = input("Enter your details here (comma-separated): ")
         
