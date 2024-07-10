@@ -1,13 +1,12 @@
 import gspread
 from google.oauth2.service_account import Credentials
 import re
-from pprint import pprint
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/drive"
-    ]
+]
 
 CREDS = Credentials.from_service_account_file('creds.json')
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
@@ -26,7 +25,6 @@ def get_user_data():
         data_str = input("Enter your details here (comma-separated): ")
         
         user_data = data_str.split(",")
-        validate_data(user_data)
 
         if validate_data(user_data):
             print("Data is valid!")
@@ -92,9 +90,21 @@ def update_user_worksheet(data):
     user_worksheet.append_row(data)
     print("User worksheet updated successfully.\n")
 
+def gim_menu(options):
+    """
+    Display a menu for gym exercises and return the user's choice.
+    """
+    print("select the exercise:")
+    for i, option in enumerate(options,1):
+        print(f"{i}. options")
+    choice = int(input("enter the number of your choice:"))
+    return options[choice -1]
+
+
+
 def load_workout():
     """
-    load the defined parametres of exercises to workout
+    Load the defined parameters of exercises to workout
     """
     print("loading your training features...")
     workout = SHEET.worksheet("features").get_all_values()
@@ -103,12 +113,18 @@ def load_workout():
 
 def main():
     """
-    call all the functions
+    Call all the functions
     """
+    print("wellcome to personal gim notes")
 
     data = get_user_data()
     update_user_worksheet(data)
     load_workout()
+    options = ["leg press","chest press","pull down"]
+    selected_option = gim_menu(options)
+    print(f"You selected: {selected_option}")
 
-print("wellcome to personal gim notes")
-main()
+    
+if __name__ == "__main__":
+
+    main()
