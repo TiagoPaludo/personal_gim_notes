@@ -1,6 +1,7 @@
 import gspread
 from google.oauth2.service_account import Credentials
 import re
+from pprint import pprint
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -25,7 +26,7 @@ def get_user_data():
         data_str = input("Enter your details here (comma-separated): ")
         
         user_data = data_str.split(",")
-        #validate_data(user_data)
+        validate_data(user_data)
 
         if validate_data(user_data):
             print("Data is valid!")
@@ -91,6 +92,23 @@ def update_user_worksheet(data):
     user_worksheet.append_row(data)
     print("User worksheet updated successfully.\n")
 
+def load_workout():
+    """
+    load the defined parametres of exercises to workout
+    """
+    print("loading your training features...")
+    workout = SHEET.worksheet("features").get_all_values()
+    workout_row = workout[-1]
+    print(workout_row)
 
-data = get_user_data()
-update_user_worksheet(data)
+def main():
+    """
+    call all the functions
+    """
+
+    data = get_user_data()
+    update_user_worksheet(data)
+    load_workout()
+
+print("wellcome to personal gim notes")
+main()
