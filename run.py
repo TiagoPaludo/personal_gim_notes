@@ -18,19 +18,22 @@ def get_user_data():
     Get user data inserted by input method
     """
     while True:
-        print("Please enter details required to create a new user. if You are user log in please")
-        print("insert data as in order example")
+        print("Please enter details required to create a new user.")
+        print("Insert data in the following order, example:")
         print(" name:\n surname:\n age(00):\n gender(male,female):\n weight(in kg):\n height(in cm):\n e-mail:\n")
 
         data_str = input("Enter your details here (comma-separated): ")
         
         user_data = data_str.split(",")
 
+
+
         if validate_data(user_data):
             print("Data is valid!")
             break
 
     return user_data
+
 
 def validate_int(value):
     try:
@@ -76,7 +79,7 @@ def validate_data(values):
             if not validators[expected_types](value.strip()):
                 raise ValueError(f"invalid {expected_types} value at index {index}: {value}")
     except ValueError as e:
-        print(f"invalid data: {e}, try again.\n")
+        print(f"Invalid data: {e}, try again.\n")
         return False
 
     return True
@@ -85,19 +88,19 @@ def update_user_worksheet(data):
     """
     Update user worksheet, add new row with the list data provided
     """
-    print("Updating user worksheet...\n")
+    print("Updating user details...\n")
     user_worksheet = SHEET.worksheet("user")
     user_worksheet.append_row(data)
-    print("User worksheet updated successfully.\n")
+    print("User created successfully.\n")
 
 def gim_menu(options):
     """
     Display a menu for gym exercises and return the user's choice.
     """
-    print("select the exercise:")
-    for i, option in enumerate(options,1):
-        print(f"{i}. options")
-    choice = int(input("enter the number of your choice:"))
+    print("Select the exercise:")
+    for i, option in enumerate(options, 1):
+        print(f"{i}. option")
+    choice = int(input("Enter the number of your choice: "))
     return options[choice -1]
 
 
@@ -106,19 +109,53 @@ def load_workout():
     """
     Load the defined parameters of exercises to workout
     """
-    print("loading your training features...")
+    print("Start updating your training features...")
     workout = SHEET.worksheet("features").get_all_values()
     workout_row = workout[-1]
     print(workout_row)
+
+def user_menu():
+
+    """
+
+    Display the user menu to choose between creating a new user or logging in.
+
+    """
+
+    print("Welcome to personal gym notes")
+
+    print("1. Create a new user")
+
+    print("2. Log in as an existing user")
+
+    choice = int(input("Enter the number of your choice: "))
+
+
+
+    if choice == 1:
+
+        data = get_user_data()
+
+        update_user_worksheet(data)
+
+    elif choice == 2:
+
+        print("Logging in...")
+
+        # Implement login functionality here
+
+    else:
+
+        print("Invalid choice, please try again.")
+
+        user_menu()
+
 
 def main():
     """
     Call all the functions
     """
-    print("wellcome to personal gim notes")
-
-    data = get_user_data()
-    update_user_worksheet(data)
+    user_menu()
     load_workout()
     options = ["leg press","chest press","pull down"]
     selected_option = gim_menu(options)
