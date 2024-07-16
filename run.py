@@ -99,9 +99,9 @@ def gim_menu(options):
     """
     print("Select the exercise:")
     for i, option in enumerate(options, 1):
-        print(f"{i}. option")
+        print(f"{i}. {option}")
     choice = int(input("Enter the number of your choice: "))
-    return options[choice -1]
+    return options[choice - 1]
 
 
 
@@ -113,6 +113,15 @@ def load_workout():
     workout = SHEET.worksheet("features").get_all_values()
     workout_row = workout[-1]
     print(workout_row)
+
+def update_features_worksheet(data):
+    """
+    Update features worksheet, add new row with the list data provided
+    """
+    print("Updating features details...\n")
+    features_worksheet = SHEET.worksheet("features")
+    features_worksheet.append_row(data)
+    print("Program created successfully.\n")
 
 def user_menu():
 
@@ -157,9 +166,10 @@ def main():
     """
     user_menu()
     load_workout()
-    options = ["leg press","chest press","pull down"]
+    options = ["leg press", "chest press", "pull down"]
     selected_option = gim_menu(options)
     print(f"You selected: {selected_option}")
+    update_features_worksheet([selected_option])
 
     
 if __name__ == "__main__":
