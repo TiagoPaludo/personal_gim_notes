@@ -103,6 +103,37 @@ def gim_menu(options):
     choice = int(input("Enter the number of your choice: "))
     return options[choice - 1]
 
+def select_option(prompt, options):
+    """
+    Display a menu for the given options and retur the user's choice.
+    """
+    print(prompt)
+    for i, option in enumerate(options, 1):
+        print(f"{i}. {option}")
+    choice = int(input("Enter the number of your choice: "))
+    return options[choice -1]
+
+def additional_info():
+    """
+    Get additional info from the user
+    """
+    weights = ["20kg", "30kg", "40kg", "50kg"]
+
+    reps = ["5", "10", "15", "20"]
+
+    rest_times = ["30s", "60s", "90s", "120s"]
+
+    periods_of_use = ["1 week", "2 weeks", "1 month", "2 months"]
+
+    weight = select_option("Select the weight used:", weights)
+
+    rep = select_option("Select the number of reps:", reps)
+
+    rest_time = select_option("Select the rest time:", rest_times)
+
+    period_of_use = select_option("Select the period of use:", periods_of_use)
+
+    return [weight, rep, rest_time, period_of_use]
 
 
 def load_workout():
@@ -167,9 +198,11 @@ def main():
     user_menu()
     load_workout()
     options = ["leg press", "chest press", "pull down"]
-    selected_option = gim_menu(options)
-    print(f"You selected: {selected_option}")
-    update_features_worksheet([selected_option])
+    selected_exercise = gim_menu(options)
+    print(f"You selected: {selected_exercise}")
+    additional_details = additional_info()
+    update_features_worksheet([selected_exercise] + additional_details)
+    load_workout()
 
     
 if __name__ == "__main__":
