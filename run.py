@@ -105,13 +105,13 @@ def gim_menu(options):
 
 def select_option(prompt, options):
     """
-    Display a menu for the given options and retur the user's choice.
+    Display a menu for the given options and return the user's choice.
     """
     print(prompt)
     for i, option in enumerate(options, 1):
         print(f"{i}. {option}")
     choice = int(input("Enter the number of your choice: "))
-    return options[choice -1]
+    return options[choice - 1]
 
 def additional_info():
     """
@@ -136,14 +136,27 @@ def additional_info():
     return [weight, rep, rest_time, period_of_use]
 
 
-def load_workout():
+def load_workout(is_new_user):
     """
     Load the defined parameters of exercises to workout
     """
-    print("Start updating your training features...")
-    workout = SHEET.worksheet("features").get_all_values()
-    workout_row = workout[-1]
-    print(workout_row)
+    features_worksheet = SHEET.worksheet("features")
+    features_data = features_worksheet.get_all_values()
+
+    if is_new_user:
+        print("Welcome, new user! Start updating your training features...")
+        return None
+
+    else:
+        print("Welcome back! Here are your training features...")
+
+        if features_data:
+            workout_row = features_data[-1]
+            print(workout_row)
+            return workout_row
+        else:
+            print("No existing workout found. Please create a new workout.")
+            return None
 
 def update_features_worksheet(data):
     """
@@ -177,6 +190,7 @@ def user_menu():
         data = get_user_data()
 
         update_user_worksheet(data)
+        return True # New user
 
     elif choice == 2:
 
@@ -184,25 +198,28 @@ def user_menu():
 
         # Implement login functionality here
 
+        return False # Existing User
+
     else:
 
         print("Invalid choice, please try again.")
 
-        user_menu()
+        return user_menu()
 
 
 def main():
     """
     Call all the functions
     """
-    user_menu()
-    load_workout()
+    is_new_user = user_menu()
+
     options = ["leg press", "chest press", "pull down"]
     selected_exercise = gim_menu(options)
     print(f"You selected: {selected_exercise}")
     additional_details = additional_info()
     update_features_worksheet([selected_exercise] + additional_details)
-    load_workout()
+    
+    load_workout(is_new_user)
 
     
 if __name__ == "__main__":
