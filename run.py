@@ -401,4 +401,29 @@ def main():
     """
     Call all the functions
     """
-    is_new_user = user
+    is_new_user = user_menu()
+
+    if not is_new_user:
+
+        manage_data()
+
+    workout_data = load_workout(is_new_user)
+
+    if workout_data is None:  # If creating new workout
+
+    
+
+        options = ["leg press", "chest press", "pull down"]
+
+        selected_option = gim_menu(options)
+
+        print(f"You selected: {selected_option}")
+
+        additional_details = additional_info()
+
+        update_features_worksheet([selected_option] + additional_details)
+
+    
+if __name__ == "__main__":
+
+    main()
