@@ -117,47 +117,55 @@ def additional_info():
     """
     Get additional info from the user
     """
-    weights = ["20kg", "30kg", "40kg", "50kg"]
+    weights = ["10kg", "20kg", "30kg", "40kg", "50kg"]
 
-    reps = ["5", "10", "15", "20"]
+    reps_options = ["5", "10", "15", "20", "25"]
 
     rest_times = ["30s", "60s", "90s", "120s"]
 
-    periods_of_use = ["1 week", "2 weeks", "1 month", "2 months"]
+    periods = ["1 week", "2 weeks", "3 weeks", "1 month"]
+
 
     weight = select_option("Select the weight used:", weights)
 
-    rep = select_option("Select the number of reps:", reps)
+    reps = select_option("Select the number of reps:", reps_options)
 
     rest_time = select_option("Select the rest time:", rest_times)
 
-    period_of_use = select_option("Select the period of use:", periods_of_use)
+    period_of_use = select_option("Select the period of use:", periods)
 
-    return [weight, rep, rest_time, period_of_use]
+    return [weight, reps, rest_time, period_of_use]
 
 
-def load_workout():
+def load_workout(is_new_user):
     """
-    Load the defined parameters of exercises to workout
+    Load the defined parameters of exercises to workout.
+
+    If existing user, ask if they want to load features or create new.
     """
-    features_worksheet = SHEET.worksheet("features")
-    features_data = features_worksheet.get_all_values()
+    if is_new_user:
 
-    if features_data:
-
-        print("Here are your training features:")
-
-        workout_row = features_data[-1]
-
-        print(workout_row)
-
-        return workout_row
+        print("Welcome, new user! Start creating your workout plan.")
 
     else:
 
-        print("No existing workout found. Please create a new workout.")
-        
-        return None
+        choice = select_option("Load existing workout or create a new one?", ["Load existing", "Create new"])
+
+        if choice == "Load existing":
+
+            print("Loading your existing workout features...")
+
+            workout = SHEET.worksheet("features").get_all_values()[2:]  # Skip first two rows
+
+            for workout_row in workout:
+
+                print("Your workout features:", workout_row)
+
+            return workout
+
+        else:
+
+            print("Creating new workout plan.")
 
 def update_features_worksheet(data):
     """
@@ -166,7 +174,140 @@ def update_features_worksheet(data):
     print("Updating features details...\n")
     features_worksheet = SHEET.worksheet("features")
     features_worksheet.append_row(data)
-    print("Program created successfully.\n")
+    
+    print("Workout features updated successfully.\n")
+
+
+
+def read_user_data():
+
+    """
+
+    Read all user data from the worksheet.
+
+    """
+
+    print("Reading user data...\n")
+
+    user_worksheet = SHEET.worksheet("user")
+
+    users = user_worksheet.get_all_records()
+
+    for user in users:
+
+        print(user)
+
+
+
+def read_workout_data():
+
+    """
+
+    Read all workout data from the worksheet starting from the third row.
+
+    """
+
+    print("Reading workout data...\n")
+
+    features_worksheet = SHEET.worksheet("features")
+
+    workouts = features_worksheet.get_all_values()[2:]  # Skip first two rows
+
+    for workout in workouts:
+
+        print(workout)
+
+
+
+def update_user():
+
+    """
+
+    Update an existing user's data.
+
+    """
+
+    read_user_data()
+
+    email = input("Enter the email of the user you want to update: ")
+
+    user_worksheet = SHEET.worksheet("user")
+
+    user_list = user_worksheet.get_all_records()
+
+    for index, user in enumerate(user_list):
+
+        if user['e-mail'] == email:
+
+            new_data = get_user_data()
+
+            for i, value in enumerate(new_data):
+
+                user_worksheet.update_cell(index + 2, i + 1, value)
+
+            print("User data updated successfully.")
+
+            return
+
+    print("User not found.")
+
+
+
+def delete_user():
+
+    """
+
+    Delete a user by email.
+
+    """
+
+    read_user_data()
+
+    email = input("Enter the email of the user you want to delete: ")
+
+    user_worksheet = SHEET.worksheet("user")
+
+    user_list = user_worksheet.get_all_records()
+
+    for index, user in enumerate(user_list):
+
+        if user['e-mail'] == email:
+
+            user_worksheet.delete_row(index + 2)
+
+            print("User deleted successfully.")
+
+            return
+
+    print("User not found.")
+
+
+
+def delete_workout():
+
+    """
+
+    Delete a workout by selecting it from the list starting from the third row.
+
+    """
+
+    read_workout_data()
+
+    workout_worksheet = SHEET.worksheet("features")
+
+    workout_list = workout_worksheet.get_all_values()[2:]  # Skip first two rows
+
+    choice = int(input("Enter the number of the workout you want to delete: "))
+
+    if 1 <= choice <= len(workout_list):
+
+        workout_worksheet.delete_row(choice + 3)  # Adjust for zero-index and skipped rows
+
+        print("Workout deleted successfully.")
+
+    else:
+
+        print("Invalid choice.")
 
 def user_menu():
 
@@ -196,6 +337,7 @@ def user_menu():
     elif choice == 2:
 
         print("Logging in...")
+        # Implement login functionality here
 
         return False # Existing User
 
@@ -205,58 +347,58 @@ def user_menu():
 
         return user_menu()
 
+def manage_data():
+
+    """
+
+    Display a menu for managing user and workout data.
+
+    """
+
+    print("Manage Data")
+
+    print("1. Read user data")
+
+    print("2. Update user data")
+
+    print("3. Delete user")
+
+    print("4. Read workout data")
+
+    print("5. Delete workout")
+
+    choice = int(input("Enter the number of your choice: "))
+
+
+
+    if choice == 1:
+
+        read_user_data()
+
+    elif choice == 2:
+
+        update_user()
+
+    elif choice == 3:
+
+        delete_user()
+
+    elif choice == 4:
+
+        read_workout_data()
+
+    elif choice == 5:
+
+        delete_workout()
+
+    else:
+
+        print("Invalid choice, please try again.")
+
+        manage_data()
 
 def main():
     """
     Call all the functions
     """
-    is_new_user = user_menu()
-
-    if is_new_user:
-
-        options = ["leg press", "chest press", "pull down"]
-
-        selected_exercise = gim_menu(options)
-
-        print(f"You selected: {selected_exercise}")
-
-        additional_details = additional_info()
-
-        update_features_worksheet([selected_exercise] + additional_details)
-
-    else:
-
-        print("1. Load existing features")
-
-        print("2. Create a new workout")
-
-        choice = int(input("Enter the number of your choice: "))
-
-
-
-        if choice == 1:
-
-            load_workout()
-
-        elif choice == 2:
-
-            options = ["leg press", "chest press", "pull down"]
-
-            selected_exercise = gim_menu(options)
-
-            print(f"You selected: {selected_exercise}")
-
-            additional_details = additional_info()
-
-            update_features_worksheet([selected_exercise] + additional_details)
-
-        else:
-
-            print("Invalid choice, please try again.")
-
-            main()  # Restart the main menu if invalid choice
-
-    
-if __name__ == "__main__":
-
-    main()
+    is_new_user = user
