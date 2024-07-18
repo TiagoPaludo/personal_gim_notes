@@ -237,7 +237,11 @@ def update_user():
 
     for index, user in enumerate(user_list):
 
-        if user['e-mail'] == email:
+        # Print user details to debug
+
+        print(user)
+
+        if user['email'] == email:
 
             new_data = get_user_data()
 
@@ -271,7 +275,7 @@ def delete_user():
 
     for index, user in enumerate(user_list):
 
-        if user['e-mail'] == email:
+        if user['email'] == email:
 
             user_worksheet.delete_row(index + 2)
 
@@ -301,7 +305,7 @@ def delete_workout():
 
     if 1 <= choice <= len(workout_list):
 
-        workout_worksheet.delete_row(choice + 3)  # Adjust for zero-index and skipped rows
+        workout_worksheet.delete_row(choice + 2)  # Adjust for zero-index and skipped rows
 
         print("Workout deleted successfully.")
 
@@ -402,6 +406,7 @@ def main():
     Call all the functions
     """
     is_new_user = user_menu()
+    
 
     if not is_new_user:
 
