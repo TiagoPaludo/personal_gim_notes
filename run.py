@@ -78,7 +78,8 @@ def validate_data(values):
     try:
         for index, (value, expected_types) in enumerate(zip(values, expected_types)):
             if not validators[expected_types](value.strip()):
-                raise ValueError(f"invalid {expected_types} value at index {index}: {value}")
+                raise ValueError
+                (f"invalid {expected_types} value at index {index}: {value}")
     except ValueError as e:
         print(f"Invalid data: {e}, try again.\n")
         return False
@@ -144,15 +145,13 @@ def load_workout(is_new_user):
         print("Welcome, new user! Start creating your workout plan.")
 
     else:
-        choice = select_option("Load existing workout or create a new one?", 
+        choice = select_option("Load existing workout or create a new one?",
         ["Load existing", "Create new"])
         if choice == "Load existing":
             print("Loading your existing workout features...")
-            workout = SHEET.worksheet("features").get_all_values()[2:]  
-            
-            
-            # Skip first two rows
+            workout = SHEET.worksheet("features").get_all_values()[2:]
 
+            # Skip first two rows
 
             for workout_row in workout:
                 print("Your workout features:", workout_row)
@@ -169,7 +168,6 @@ def update_features_worksheet(data):
     features_worksheet = SHEET.worksheet("features")
     features_worksheet.append_row(data)
     print("Workout features updated successfully.\n")
-
 
 
 def read_user_data():
@@ -240,19 +238,15 @@ def delete_workout():
     """
     read_workout_data()
     workout_worksheet = SHEET.worksheet("features")
-    workout_list = workout_worksheet.get_all_values()[2:]  
-    
-    
-    # Skip first two rows
+    workout_list = workout_worksheet.get_all_values()[2:]
 
+    # Skip first two rows
 
     choice = int(input("Enter the number of the workout you want to delete: "))
     if 1 <= choice <= len(workout_list):
-        workout_worksheet.delete_row(choice + 2)  
-        
+        workout_worksheet.delete_row(choice + 2)
 
-        # Adjust for zero-index and skipped rows
-
+    # Adjust for zero-index and skipped rows
 
         print("Workout deleted successfully.")
     else:
@@ -271,8 +265,8 @@ def user_menu():
     if choice == 1:
         data = get_user_data()
         update_user_worksheet(data)
-        return True 
-          
+        return True
+
     # New user
 
     elif choice == 2:
@@ -280,8 +274,8 @@ def user_menu():
 
     # Implement login functionality here
 
-        return False 
-        
+        return False
+
     # Existing User
 
     else:
@@ -323,7 +317,7 @@ def main():
     """
 
 
-is_new_user = user_menu() 
+is_new_user = user_menu()
 
 if not is_new_user:
     manage_data()
