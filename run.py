@@ -94,7 +94,7 @@ def update_user_worksheet(data):
     print("Updating user details...\n")
     user_worksheet = SHEET.worksheet("user")
     user_worksheet.append_row(data)
-    print("User created successfully.\n")
+    print("User created/ updated successfully.\n")
 
 
 def gim_menu(options):
@@ -136,28 +136,29 @@ def additional_info():
     return [weight, reps, rest_time, period_of_use]
 
 
-def load_workout(is_new_user):
+def load_workout():
     """
     Load the defined parameters of exercises to workout.
-    If existing user, ask if they want to load features or create new.
+    
     """
-    if is_new_user:
-        print("Welcome, new user! Start creating your workout plan.")
+features_worksheet = SHEET.worksheet("features")
+workout = features_worksheet.get_all_values()[2:]  
 
-    else:
-        choice = select_option("Load existing workout or create a new one?",
-        ["Load existing", "Create new"])
-        if choice == "Load existing":
-            print("Loading your existing workout features...")
-            workout = SHEET.worksheet("features").get_all_values()[2:]
+# Skip first two rows
 
-            # Skip first two rows
+if workout:
 
-            for workout_row in workout:
-                print("Your workout features:", workout_row)
-            return workout
-        else:
-            print("Creating new workout plan.")
+    print("Your workout features:")
+
+    for workout_row in workout:
+
+        print(workout_row)
+
+else:
+
+    print("No existing workout features found.")
+
+    
 
 
 def update_features_worksheet(data):
@@ -172,13 +173,18 @@ def update_features_worksheet(data):
 
 def read_user_data():
     """
-    Read all user data from the worksheet.
+    Read the user data from the worksheet.
     """
     print("Reading user data...\n")
     user_worksheet = SHEET.worksheet("user")
-    users = user_worksheet.get_all_records()
-    for user in users:
-        print(user)
+    user = user_worksheet.get_all_records()
+    if user:
+
+        print(user[0])
+
+    else:
+
+        print("No user data found.")
 
 
 def read_workout_data():
@@ -187,70 +193,49 @@ def read_workout_data():
     """
     print("Reading workout data...\n")
     features_worksheet = SHEET.worksheet("features")
-    workouts = features_worksheet.get_all_values()[2:]  # Skip first two rows
-    for workout in workouts:
-        print(workout)
+    workouts = features_worksheet.get_all_values()[2:]  
+    
+    # Skip first two rows
+    
+    if workouts:
+
+        for workout in workouts:
+
+            print(workout)
+
+    else:
+
+        print("No workout data found.")
 
 
 def update_user():
     """
-    Update an existing user's data.
+    Update the existing user's data.
     """
     read_user_data()
-    email = input("Enter the email of the user you want to update: ")
-    user_worksheet = SHEET.worksheet("user")
-    user_list = user_worksheet.get_all_records()
-    # Print keys to debug and find the correct key
-
-    print("Keys in the user records:", user_list[0].keys())
-
-    for index, user in enumerate(user_list):
-        # Print user details to debug
-        print(user)
-        if user['email'] == email:
-            new_data = get_user_data()
-            for i, value in enumerate(new_data):
-                user_worksheet.update_cell(index + 2, i + 1, value)
-            print("User data updated successfully.")
-            return
-    print("User not found.")
+    new_data = get_user_data()
+    update_user_worksheet(new_data)
+    print("User data updated successfully.")
 
 
 def delete_user():
     """
-    Delete a user by email.
+    Delete the user data.
     """
-    read_user_data()
-    email = input("Enter the email of the user you want to delete: ")
+    
     user_worksheet = SHEET.worksheet("user")
-    user_list = user_worksheet.get_all_records()
-    for index, user in enumerate(user_list):
-        if user['email'] == email:
-            user_worksheet.delete_row(index + 2)
-            print("User deleted successfully.")
-            return
-    print("User not found.")
+    user_worksheet.clear()
+    print("User data deleted successfully.")
 
 
 def delete_workout():
     """
-    Delete a workout by selecting it from the list starting from the third row.
+    Delete all workout data.
     """
-    read_workout_data()
-    workout_worksheet = SHEET.worksheet("features")
-    workout_list = workout_worksheet.get_all_values()[2:]
-
-    # Skip first two rows
-
-    choice = int(input("Enter the number of the workout you want to delete: "))
-    if 1 <= choice <= len(workout_list):
-        workout_worksheet.delete_row(choice + 2)
-
-    # Adjust for zero-index and skipped rows
-
-        print("Workout deleted successfully.")
-    else:
-        print("Invalid choice.")
+    
+    features_worksheet = SHEET.worksheet("features")
+    features_worksheet.clear()
+    print("Workout data deleted successfully.")
 
 
 def user_menu():
@@ -271,9 +256,6 @@ def user_menu():
 
     elif choice == 2:
         print("Logging in...")
-
-    # Implement login functionality here
-
         return False
 
     # Existing User
@@ -315,21 +297,12 @@ def main():
     """
     Call all the functions
     """
-
-
-is_new_user = user_menu()
-
-if not is_new_user:
+    
+    user_menu()
+    load_workout()
+    workout_details = additional_info()
+    update_features_worksheet(workout_details)
     manage_data()
-workout_data = load_workout(is_new_user)
-
-if workout_data is None:  # If creating new workout
-
-    options = ["leg press", "chest press", "pull down"]
-    selected_option = gim_menu(options)
-    print(f"You selected: {selected_option}")
-    additional_details = additional_info()
-    update_features_worksheet([selected_option] + additional_details)
 
 
 if __name__ == "__main__":
