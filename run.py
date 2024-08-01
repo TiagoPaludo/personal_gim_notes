@@ -23,7 +23,7 @@ def get_user_data():
         print("Insert data in the following order, example:")
         print(" name:\n surname:\n age(00):\n gender(male,female):\n weight(in kg):\n height(in cm):\n e-mail:\n")
 
-        data_str = input("Enter your details here (comma-separated): ")
+        data_str = input("Enter your details here (comma-separated):\n ")
         user_data = data_str.split(",")
 
         if validate_data(user_data):
@@ -104,7 +104,7 @@ def gim_menu(options):
     print("Select the exercise:")
     for i, option in enumerate(options, 1):
         print(f"{i}. {option}")
-    choice = int(input("Enter the number of your choice: "))
+    choice = int(input("Enter the number of your choice:\n "))
     return options[choice - 1]
 
 
@@ -115,7 +115,7 @@ def select_option(prompt, options):
     print(prompt)
     for i, option in enumerate(options, 1):
         print(f"{i}. {option}")
-    choice = int(input("Enter the number of your choice: "))
+    choice = int(input("Enter the number of your choice:\n "))
     return options[choice - 1]
 
 
@@ -245,7 +245,7 @@ def user_menu():
     print("Welcome to personal gym notes")
     print("1. Create a new user")
     print("2. Log in as an existing user")
-    choice = int(input("Enter the number of your choice: "))
+    choice = int(input("Enter the number of your choice:\n "))
 
     if choice == 1:
         data = get_user_data()
@@ -276,7 +276,7 @@ def manage_data():
     print("3. Delete user")
     print("4. Read workout data")
     print("5. Delete workout")
-    choice = int(input("Enter the number of your choice: "))
+    choice = int(input("Enter the number of your choice:\n "))
 
     if choice == 1:
         read_user_data()
